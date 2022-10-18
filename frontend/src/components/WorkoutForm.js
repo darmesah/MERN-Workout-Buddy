@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import useGlobalContext from '../context/WorkoutContext';
+import useWorkoutContext from '../context/WorkoutContext';
+import useAuthContext from '../hooks/useAuthContext';
 
 const WorkoutForm = () => {
-  const { addWorkout } = useGlobalContext();
+  const { addWorkout } = useWorkoutContext();
+  const { user } = useAuthContext();
 
   const [title, setTitle] = useState('');
   const [load, setLoad] = useState('');
@@ -12,6 +14,11 @@ const WorkoutForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!user) {
+      setError('You must be logged in');
+      return;
+    }
 
     const workout = { title, load, reps };
 
@@ -28,7 +35,6 @@ const WorkoutForm = () => {
       setReps('');
       setError(null);
       setEmptyFields([]);
-      console.log(response.message);
     }
   };
 

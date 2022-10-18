@@ -1,9 +1,9 @@
 import WorkoutDetails from '../components/WorkoutDetails';
 import WorkoutForm from '../components/WorkoutForm';
-import useGlobalContext from '../context/WorkoutContext';
+import useWorkoutContext from '../context/WorkoutContext';
 
 const Home = () => {
-  const { workouts } = useGlobalContext();
+  const { workouts } = useWorkoutContext();
 
   return (
     <div className="home">

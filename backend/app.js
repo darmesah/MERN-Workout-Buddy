@@ -1,8 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const workoutRoutes = require('./routes/workouts');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -13,17 +15,16 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PUT, PATCH, DELETE'
-  );
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
+const corsOptions = {
+  origin: '*',
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions)); // Use this after the variable declaration
 
 app.use('/api/workouts', workoutRoutes);
+app.use('/api/user', userRoutes);
 
 app.use((error, req, res, next) => {
   const status = error.statusCode || 500;

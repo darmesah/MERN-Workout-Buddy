@@ -1,11 +1,11 @@
-import useGlobalContext from '../context/WorkoutContext';
+import useWorkoutContext from '../context/WorkoutContext';
 import { FaRegTrashAlt } from 'react-icons/fa';
 
 // date fns
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 const WorkoutDetails = ({ _id, title, load, reps, createdAt }) => {
-  const { deleteWorkout } = useGlobalContext();
+  const { deleteWorkout } = useWorkoutContext();
   return (
     <div className="workout-details">
       <h4>{title}</h4>

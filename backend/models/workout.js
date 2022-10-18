@@ -16,6 +16,11 @@ const workoutSchema = new Schema(
       type: Number,
       required: true,
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   { timestamps: true }
 );

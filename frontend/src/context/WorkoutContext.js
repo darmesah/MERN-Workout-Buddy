@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useReducer } from 'react';
+import useAuthContext from '../hooks/useAuthContext';
 
 const WorkoutsContext = createContext({
   workouts: [],
@@ -23,11 +24,17 @@ const workoutsReducer = (state, action) => {
 };
 
 export const WorkoutsContextProvider = ({ children }) => {
+  const { user } = useAuthContext();
   const [workouts, dispatch] = useReducer(workoutsReducer, []);
 
   useEffect(() => {
     const fetchWorkouts = async () => {
-      const response = await fetch('http://localhost:4000/api/workouts');
+      const response = await fetch('http://localhost:4000/api/workouts', {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+
       const json = await response.json();
 
       if (response.ok) {
@@ -35,8 +42,10 @@ export const WorkoutsContextProvider = ({ children }) => {
       }
     };
 
-    fetchWorkouts();
-  }, []);
+    if (user) {
+      fetchWorkouts();
+    }
+  }, [dispatch, user]);
 
   const addWorkoutHandler = async (workout) => {
     const response = await fetch('http://localhost:4000/api/workouts', {
@@ -44,6 +53,7 @@ export const WorkoutsContextProvider = ({ children }) => {
       body: JSON.stringify(workout),
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${user.token}`,
       },
     });
 
@@ -67,8 +77,15 @@ export const WorkoutsContextProvider = ({ children }) => {
   };
 
   const deleteWorkoutHandler = async (_id) => {
+    if (!user) {
+      return;
+    }
+
     const response = await fetch(`http://localhost:4000/api/workouts/${_id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
     });
 
     if (!response.ok) {
@@ -91,6 +108,7 @@ export const WorkoutsContextProvider = ({ children }) => {
     workouts,
     addWorkout: addWorkoutHandler,
     deleteWorkout: deleteWorkoutHandler,
+    dispatch,
   };
 
   return (
@@ -100,7 +118,7 @@ export const WorkoutsContextProvider = ({ children }) => {
   );
 };
 
-const useGlobalContext = () => {
+const useWorkoutContext = () => {
   return useContext(WorkoutsContext);
 };
-export default useGlobalContext;
+export default useWorkoutContext;
